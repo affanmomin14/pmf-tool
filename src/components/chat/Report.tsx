@@ -18,7 +18,11 @@ const SEVERITY = {
   neutral: { bg: '#F8FAFC', border: '#E2E8F0', accent: '#94A3B8', gradient: 'rgba(148,163,184,0.04)' },
 }
 
-const TREND = { up: { icon: '↑', color: '#10B981' }, down: { icon: '↓', color: '#EF4444' }, neutral: { icon: '→', color: '#94A3B8' } }
+const TREND = {
+  up: { icon: '↑', color: '#10B981' },
+  down: { icon: '↓', color: '#EF4444' },
+  neutral: { icon: '→', color: '#94A3B8' },
+}
 
 function MetricPill({ metric }: { metric: ReportMetric }) {
   const t = TREND[metric.trend]
@@ -26,7 +30,9 @@ function MetricPill({ metric }: { metric: ReportMetric }) {
     <span className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-secondary">
       <span className="text-muted-foreground">{metric.label}</span>
       <span className="font-semibold text-foreground">{metric.value}</span>
-      <span className="font-bold" style={{ color: t.color }}>{t.icon}</span>
+      <span className="font-bold" style={{ color: t.color }}>
+        {t.icon}
+      </span>
     </span>
   )
 }
@@ -62,7 +68,9 @@ function ReportCard({ section, index, isBlurred }: { section: ReportSection; ind
         </div>
         {section.metrics && (
           <div className="flex flex-wrap gap-1.5 mt-3 ml-8">
-            {section.metrics.map(m => <MetricPill key={m.label} metric={m} />)}
+            {section.metrics.map(m => (
+              <MetricPill key={m.label} metric={m} />
+            ))}
           </div>
         )}
       </MagicCard>
@@ -85,7 +93,11 @@ export function Report({ isUnlocked }: ReportProps) {
             </p>
           </div>
           {isUnlocked && (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+            >
               <Button
                 variant="outline"
                 className="rounded-xl text-[13px] font-medium cursor-pointer gap-2 h-10"
@@ -104,7 +116,10 @@ export function Report({ isUnlocked }: ReportProps) {
             <ReportCard key={section.id} section={section} index={i} isBlurred={!isUnlocked && i > 1} />
           ))}
           {!isUnlocked && (
-            <div className="absolute bottom-0 left-0 right-0 h-[55%] pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #FAFBFC)' }} />
+            <div
+              className="absolute bottom-0 left-0 right-0 h-[55%] pointer-events-none"
+              style={{ background: 'linear-gradient(to bottom, transparent, #FAFBFC)' }}
+            />
           )}
         </div>
 

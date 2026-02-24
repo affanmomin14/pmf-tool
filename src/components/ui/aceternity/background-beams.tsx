@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -45,11 +45,7 @@ export function BackgroundBeams({ className }: BackgroundBeamsProps) {
       />
 
       {/* Beams */}
-      <svg
-        ref={svgRef}
-        className="absolute inset-0 h-full w-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg ref={svgRef} className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="beam-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="rgba(16, 185, 129, 0)" />

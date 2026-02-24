@@ -51,7 +51,8 @@ export function useChat() {
 
     addMessage({
       role: 'bot',
-      content: "Hi, I'm your PMF diagnostic assistant. I'll help you identify where you stand on your product-market fit journey in under 3 minutes.",
+      content:
+        "Hi, I'm your PMF diagnostic assistant. I'll help you identify where you stand on your product-market fit journey in under 3 minutes.",
       type: 'text',
     })
 
@@ -65,91 +66,97 @@ export function useChat() {
     })
   }, [addMessage, simulateTyping])
 
-  const selectCategory = useCallback(async (categoryId: string) => {
-    const category = CATEGORIES.find(c => c.id === categoryId)
-    if (!category) return
+  const selectCategory = useCallback(
+    async (categoryId: string) => {
+      const category = CATEGORIES.find(c => c.id === categoryId)
+      if (!category) return
 
-    setSelectedCategory(categoryId)
-
-    addMessage({
-      role: 'user',
-      content: `${category.icon} ${category.title}`,
-      type: 'text',
-    })
-
-    await simulateTyping()
-
-    addMessage({
-      role: 'bot',
-      content: `Great choice. ${category.title} is one of the most critical PMF dimensions. Let me ask you 5 focused questions to diagnose your situation.`,
-      type: 'text',
-    })
-
-    await simulateTyping(800)
-
-    setCurrentStep('questions')
-    setQuestionIndex(0)
-
-    const firstQuestion = QUESTIONS[0]
-    addMessage({
-      role: 'bot',
-      content: firstQuestion.question,
-      type: 'question',
-      options: firstQuestion.options,
-    })
-  }, [addMessage, simulateTyping])
-
-  const answerQuestion = useCallback(async (answer: string) => {
-    const currentQuestion = QUESTIONS[questionIndex]
-    if (!currentQuestion) return
-
-    addMessage({
-      role: 'user',
-      content: answer,
-      type: 'text',
-    })
-
-    const newResponse: UserResponse = {
-      step: currentQuestion.step,
-      question: currentQuestion.question,
-      answer,
-    }
-    setResponses(prev => [...prev, newResponse])
-
-    await simulateTyping()
-
-    const insight = getRandomInsight(currentQuestion.step)
-    addMessage({
-      role: 'bot',
-      content: insight,
-      type: 'insight',
-    })
-
-    const nextIndex = questionIndex + 1
-
-    if (nextIndex < QUESTIONS.length) {
-      await simulateTyping(INSIGHT_DELAY)
-
-      setQuestionIndex(nextIndex)
-      const nextQuestion = QUESTIONS[nextIndex]
-      addMessage({
-        role: 'bot',
-        content: nextQuestion.question,
-        type: 'question',
-        options: nextQuestion.options,
-      })
-    } else {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      setSelectedCategory(categoryId)
 
       addMessage({
-        role: 'bot',
-        content: 'Excellent. I have everything I need. Let me analyze your responses now.',
+        role: 'user',
+        content: `${category.icon} ${category.title}`,
         type: 'text',
       })
 
-      setCurrentStep('analysis')
-    }
-  }, [addMessage, questionIndex, simulateTyping])
+      await simulateTyping()
+
+      addMessage({
+        role: 'bot',
+        content: `Great choice. ${category.title} is one of the most critical PMF dimensions. Let me ask you 5 focused questions to diagnose your situation.`,
+        type: 'text',
+      })
+
+      await simulateTyping(800)
+
+      setCurrentStep('questions')
+      setQuestionIndex(0)
+
+      const firstQuestion = QUESTIONS[0]
+      addMessage({
+        role: 'bot',
+        content: firstQuestion.question,
+        type: 'question',
+        options: firstQuestion.options,
+      })
+    },
+    [addMessage, simulateTyping],
+  )
+
+  const answerQuestion = useCallback(
+    async (answer: string) => {
+      const currentQuestion = QUESTIONS[questionIndex]
+      if (!currentQuestion) return
+
+      addMessage({
+        role: 'user',
+        content: answer,
+        type: 'text',
+      })
+
+      const newResponse: UserResponse = {
+        step: currentQuestion.step,
+        question: currentQuestion.question,
+        answer,
+      }
+      setResponses(prev => [...prev, newResponse])
+
+      await simulateTyping()
+
+      const insight = getRandomInsight(currentQuestion.step)
+      addMessage({
+        role: 'bot',
+        content: insight,
+        type: 'insight',
+      })
+
+      const nextIndex = questionIndex + 1
+
+      if (nextIndex < QUESTIONS.length) {
+        await simulateTyping(INSIGHT_DELAY)
+
+        setQuestionIndex(nextIndex)
+        const nextQuestion = QUESTIONS[nextIndex]
+        addMessage({
+          role: 'bot',
+          content: nextQuestion.question,
+          type: 'question',
+          options: nextQuestion.options,
+        })
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 2000))
+
+        addMessage({
+          role: 'bot',
+          content: 'Excellent. I have everything I need. Let me analyze your responses now.',
+          type: 'text',
+        })
+
+        setCurrentStep('analysis')
+      }
+    },
+    [addMessage, questionIndex, simulateTyping],
+  )
 
   const completeAnalysis = useCallback(() => {
     setCurrentStep('preview')
@@ -164,29 +171,33 @@ export function useChat() {
     setCurrentStep('email-gate')
     addMessage({
       role: 'bot',
-      content: "I've generated your 9-section PMF report. Enter your email to unlock the full analysis and PDF download.",
+      content:
+        "I've generated your 9-section PMF report. Enter your email to unlock the full analysis and PDF download.",
       type: 'email-gate',
     })
   }, [addMessage])
 
-  const submitEmail = useCallback(async (email: string) => {
-    addMessage({
-      role: 'user',
-      content: email,
-      type: 'text',
-    })
+  const submitEmail = useCallback(
+    async (email: string) => {
+      addMessage({
+        role: 'user',
+        content: email,
+        type: 'text',
+      })
 
-    await simulateTyping(800)
+      await simulateTyping(800)
 
-    setEmailUnlocked(true)
-    setCurrentStep('report')
+      setEmailUnlocked(true)
+      setCurrentStep('report')
 
-    addMessage({
-      role: 'bot',
-      content: 'Your full PMF Insights Report is ready. Scroll down to explore all 9 sections.',
-      type: 'report',
-    })
-  }, [addMessage, simulateTyping])
+      addMessage({
+        role: 'bot',
+        content: 'Your full PMF Insights Report is ready. Scroll down to explore all 9 sections.',
+        type: 'report',
+      })
+    },
+    [addMessage, simulateTyping],
+  )
 
   return {
     messages,
@@ -196,7 +207,7 @@ export function useChat() {
     isTyping,
     selectedCategory,
     emailUnlocked,
-    sessionId: sessionIdRef.current,
+    sessionIdRef,
     startChat,
     selectCategory,
     answerQuestion,

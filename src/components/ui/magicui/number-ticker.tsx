@@ -13,12 +13,7 @@ interface NumberTickerProps {
   className?: string
 }
 
-export function NumberTicker({
-  value,
-  direction = 'up',
-  delay = 0,
-  className,
-}: NumberTickerProps) {
+export function NumberTicker({ value, direction = 'up', delay = 0, className }: NumberTickerProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const motionValue = useMotionValue(direction === 'down' ? value : 0)
   const springValue = useSpring(motionValue, { damping: 60, stiffness: 100 })
@@ -34,17 +29,13 @@ export function NumberTicker({
 
   useEffect(
     () =>
-      springValue.on('change', (latest) => {
+      springValue.on('change', latest => {
         if (ref.current) {
-          ref.current.textContent = Intl.NumberFormat('en-US').format(
-            Math.round(latest)
-          )
+          ref.current.textContent = Intl.NumberFormat('en-US').format(Math.round(latest))
         }
       }),
-    [springValue]
+    [springValue],
   )
 
-  return (
-    <span className={cn('inline-block tabular-nums', className)} ref={ref} />
-  )
+  return <span className={cn('inline-block tabular-nums', className)} ref={ref} />
 }

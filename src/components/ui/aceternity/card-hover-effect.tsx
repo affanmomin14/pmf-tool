@@ -52,14 +52,10 @@ export function HoverEffect({ items, className, onSelect, disabled }: HoverEffec
           <div
             className={cn(
               'relative z-10 flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 border',
-              hoveredIndex === idx
-                ? 'border-border bg-transparent translate-x-1'
-                : 'border-transparent bg-card'
+              hoveredIndex === idx ? 'border-border bg-transparent translate-x-1' : 'border-transparent bg-card',
             )}
             style={{
-              boxShadow: hoveredIndex === idx
-                ? '0 2px 8px rgba(0,0,0,0.04)'
-                : '0 1px 2px rgba(0,0,0,0.02)',
+              boxShadow: hoveredIndex === idx ? '0 2px 8px rgba(0,0,0,0.04)' : '0 1px 2px rgba(0,0,0,0.02)',
             }}
           >
             <span className="text-2xl shrink-0" role="img" aria-hidden="true">

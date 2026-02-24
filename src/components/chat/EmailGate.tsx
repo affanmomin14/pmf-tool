@@ -44,7 +44,11 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
               style={{ background: 'linear-gradient(135deg, #0F172A, #334155)' }}
             >
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                />
               </svg>
             </div>
             <div>
@@ -58,7 +62,10 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
               <Input
                 type="email"
                 value={email}
-                onChange={e => { setEmail(e.target.value); if (error) setError('') }}
+                onChange={e => {
+                  setEmail(e.target.value)
+                  if (error) setError('')
+                }}
                 placeholder="founder@startup.com"
                 disabled={disabled}
                 className={`rounded-xl h-12 px-4 text-[14px] ${error ? 'border-red-300 focus-visible:ring-red-200' : ''}`}
@@ -72,7 +79,11 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
                   className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
                   <svg className="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </motion.div>
               )}
@@ -97,9 +108,7 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
               Unlock Full Report
             </Button>
 
-            <p className="text-[10px] text-muted-foreground text-center">
-              No spam. We&apos;ll only send your report.
-            </p>
+            <p className="text-[10px] text-muted-foreground text-center">No spam. We&apos;ll only send your report.</p>
           </form>
         </div>
       </div>

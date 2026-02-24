@@ -25,17 +25,14 @@ export function MagicCard({
   const [mousePosition, setMousePosition] = useState({ x: -gradientSize, y: -gradientSize })
   const [opacity, setOpacity] = useState(gradientOpacity)
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!cardRef.current) return
-      const rect = cardRef.current.getBoundingClientRect()
-      setMousePosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      })
-    },
-    []
-  )
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    })
+  }, [])
 
   const handleMouseEnter = useCallback(() => {
     setOpacity(1)
@@ -52,10 +49,7 @@ export function MagicCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={cn(
-        'relative overflow-hidden rounded-2xl',
-        className
-      )}
+      className={cn('relative overflow-hidden rounded-2xl', className)}
       style={style}
     >
       <div

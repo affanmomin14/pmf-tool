@@ -11,12 +11,7 @@ interface ShimmerButtonProps {
   'aria-label'?: string
 }
 
-export function ShimmerButton({
-  className,
-  children,
-  onClick,
-  ...props
-}: ShimmerButtonProps) {
+export function ShimmerButton({ className, children, onClick, ...props }: ShimmerButtonProps) {
   return (
     <button
       className={cn(
@@ -25,7 +20,7 @@ export function ShimmerButton({
         'rounded-full transition-all duration-300 ease-out',
         'hover:-translate-y-[2px] hover:shadow-[0_16px_40px_-8px_rgba(16,185,129,0.4)]',
         'active:translate-y-[1px] active:scale-[0.98]',
-        className
+        className,
       )}
       style={{
         background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
@@ -40,7 +35,8 @@ export function ShimmerButton({
         <div
           className="absolute inset-0 -translate-x-full"
           style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 60%, transparent 100%)',
+            background:
+              'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 60%, transparent 100%)',
             animation: 'shimmer-sweep 3s ease-in-out infinite',
           }}
         />
@@ -54,9 +50,7 @@ export function ShimmerButton({
         }}
       />
 
-      <span className="relative z-10 flex items-center gap-2.5">
-        {children}
-      </span>
+      <span className="relative z-10 flex items-center gap-2.5">{children}</span>
     </button>
   )
 }

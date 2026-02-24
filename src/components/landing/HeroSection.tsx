@@ -46,12 +46,14 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
             }}
           >
             <span className="relative flex h-[6px] w-[6px]">
-              <span className="absolute inset-0 rounded-full bg-emerald-500" style={{ animation: 'pulse-ring 2s cubic-bezier(0,0,0.2,1) infinite' }} />
+              <span
+                className="absolute inset-0 rounded-full bg-emerald-500"
+                style={{ animation: 'pulse-ring 2s cubic-bezier(0,0,0.2,1) infinite' }}
+              />
               <span className="relative rounded-full h-[6px] w-[6px] bg-emerald-500" />
             </span>
             <span>
-              <NumberTicker value={analysisCount} className="font-semibold text-foreground" />
-              + diagnostics completed
+              <NumberTicker value={analysisCount} className="font-semibold text-foreground" />+ diagnostics completed
             </span>
           </div>
         </motion.div>
@@ -78,8 +80,7 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
           transition={{ duration: 0.7, delay: 0.7, ease }}
           className="text-[17px] md:text-lg leading-relaxed text-muted-foreground max-w-xl mx-auto mb-10"
         >
-          A free, AI-driven diagnostic for post-MVP founders.
-          Identify traction gaps, market risks, and your next move.
+          A free, AI-driven diagnostic for post-MVP founders. Identify traction gaps, market risks, and your next move.
         </motion.p>
 
         {/* CTA row */}
@@ -92,14 +93,20 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
           {/* Magic UI: ShimmerButton */}
           <ShimmerButton onClick={onStartAssessment} aria-label="Start free assessment">
             Start Free Assessment
-            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </ShimmerButton>
 
-          <span className="text-[13px] text-muted-foreground">
-            No signup required &middot; 3 min
-          </span>
+          <span className="text-[13px] text-muted-foreground">No signup required &middot; 3 min</span>
         </motion.div>
 
         {/* Social proof row */}
@@ -112,9 +119,21 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
           {/* Testimonial cards */}
           <div className="flex flex-wrap justify-center gap-3 max-w-2xl">
             {[
-              { name: 'Sarah K.', role: 'CEO, DataStack', quote: 'Identified our retention gap in 3 minutes. Changed our roadmap.' },
-              { name: 'Marcus L.', role: 'Founder, Brevity', quote: 'The PMF score convinced our investors we had the right strategy.' },
-              { name: 'Priya R.', role: 'CTO, Flowbase', quote: 'Best free diagnostic for early-stage. Actionable, not theoretical.' },
+              {
+                name: 'Sarah K.',
+                role: 'CEO, DataStack',
+                quote: 'Identified our retention gap in 3 minutes. Changed our roadmap.',
+              },
+              {
+                name: 'Marcus L.',
+                role: 'Founder, Brevity',
+                quote: 'The PMF score convinced our investors we had the right strategy.',
+              },
+              {
+                name: 'Priya R.',
+                role: 'CTO, Flowbase',
+                quote: 'Best free diagnostic for early-stage. Actionable, not theoretical.',
+              },
             ].map((t, i) => (
               <motion.div
                 key={t.name}
@@ -126,9 +145,7 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
                   className="card-elevated px-5 py-4 max-w-[240px] text-left"
                   gradientColor="rgba(16, 185, 129, 0.08)"
                 >
-                  <p className="text-[13px] leading-snug text-muted-foreground mb-3">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
+                  <p className="text-[13px] leading-snug text-muted-foreground mb-3">&ldquo;{t.quote}&rdquo;</p>
                   <div className="flex items-center gap-2">
                     <div
                       className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
@@ -149,20 +166,42 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
           {/* Trust line */}
           <div className="flex items-center gap-6 text-[12px] text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-4 h-4 text-emerald-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <span>Free forever</span>
             </div>
             <div className="w-px h-3 bg-border" />
             <div className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              <svg
+                className="w-4 h-4 text-emerald-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                />
               </svg>
               <span>No signup wall</span>
             </div>
             <div className="w-px h-3 bg-border" />
-            <span>Built by <span className="font-medium text-foreground">Wednesday Solutions</span></span>
+            <span>
+              Built by <span className="font-medium text-foreground">Wednesday Solutions</span>
+            </span>
           </div>
         </motion.div>
       </div>

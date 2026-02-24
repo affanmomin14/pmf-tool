@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 import { cn } from '@/lib/utils'
 
 interface AvatarCirclesProps {
@@ -10,13 +12,7 @@ interface AvatarCirclesProps {
   sublabel?: string
 }
 
-export function AvatarCircles({
-  className,
-  numPeople,
-  avatarUrls = [],
-  label,
-  sublabel,
-}: AvatarCirclesProps) {
+export function AvatarCircles({ className, numPeople, avatarUrls = [], label, sublabel }: AvatarCirclesProps) {
   const initials = ['S', 'M', 'A', 'P', 'J']
   const gradients = [
     'from-emerald-400 to-teal-500',
@@ -35,7 +31,7 @@ export function AvatarCircles({
                 className="w-9 h-9 rounded-full border-2 border-background overflow-hidden"
                 style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
               >
-                <img src={url} alt="" className="w-full h-full object-cover" />
+                <Image src={url} alt="" width={36} height={36} className="w-full h-full object-cover" />
               </div>
             ))
           : initials.slice(0, 4).map((initial, i) => (
@@ -43,7 +39,7 @@ export function AvatarCircles({
                 key={i}
                 className={cn(
                   'w-9 h-9 rounded-full border-2 border-background flex items-center justify-center bg-gradient-to-br text-[11px] font-bold text-white',
-                  gradients[i]
+                  gradients[i],
                 )}
                 style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
               >

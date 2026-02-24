@@ -25,11 +25,7 @@ export function TextGenerateEffect({
   const wordsArray = words.split(' ')
 
   useEffect(() => {
-    animate(
-      'span',
-      { opacity: 1, filter: filter ? 'blur(0px)' : 'none' },
-      { duration, delay: stagger(0.06) }
-    )
+    animate('span', { opacity: 1, filter: filter ? 'blur(0px)' : 'none' }, { duration, delay: stagger(0.06) })
   }, [animate, duration, filter])
 
   return (
@@ -40,10 +36,7 @@ export function TextGenerateEffect({
           return (
             <motion.span
               key={`${word}-${idx}`}
-              className={cn(
-                'inline-block',
-                isHighlight && 'text-gradient italic'
-              )}
+              className={cn('inline-block', isHighlight && 'text-gradient italic')}
               style={{
                 filter: filter ? 'blur(8px)' : 'none',
                 opacity: 0,
