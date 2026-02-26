@@ -33,14 +33,14 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
+      transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
       className="px-5 py-2"
     >
-      <div className="ml-[42px] max-w-lg">
+      <div className="max-w-lg mx-auto">
         <div className="card-elevated p-6">
           <div className="flex items-center gap-3 mb-5">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
               style={{ background: 'linear-gradient(135deg, #0F172A, #334155)' }}
             >
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -53,7 +53,9 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
             </div>
             <div>
               <p className="text-[14px] font-semibold text-foreground">Your 9-section report is ready</p>
-              <p className="text-[12px] text-muted-foreground">Enter your email to unlock the full analysis & PDF</p>
+              <p className="text-[12px] text-muted-foreground">
+                Enter your email to unlock charts, scores &amp; PDF download
+              </p>
             </div>
           </div>
 
@@ -68,7 +70,10 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
                 }}
                 placeholder="founder@startup.com"
                 disabled={disabled}
-                className={`rounded-xl h-12 px-4 text-[14px] ${error ? 'border-red-300 focus-visible:ring-red-200' : ''}`}
+                className={`rounded-xl h-12 px-4 text-[14px] bg-white transition-colors ${error
+                    ? 'border-red-300 focus-visible:ring-red-200'
+                    : 'focus-visible:ring-emerald-200 focus-visible:border-emerald-300'
+                  }`}
                 aria-label="Email address"
                 autoComplete="email"
               />
@@ -98,7 +103,7 @@ export function EmailGate({ onSubmit, disabled }: EmailGateProps) {
             <Button
               type="submit"
               disabled={!isValid || disabled}
-              className="w-full rounded-xl h-12 text-[14px] font-semibold cursor-pointer text-white"
+              className="w-full rounded-xl h-12 text-[14px] font-semibold cursor-pointer text-white shadow-sm hover:shadow-md transition-all"
               style={{
                 background: isValid && !disabled ? 'linear-gradient(135deg, #0F172A, #1E293B)' : undefined,
               }}

@@ -1,96 +1,219 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 
-import { TextGenerateEffect } from '@/components/ui/aceternity/text-generate-effect'
+import { FlipWords } from '@/components/ui/aceternity/flip-words'
+import { Highlight } from '@/components/ui/aceternity/hero-highlight'
+import { SparklesCore } from '@/components/ui/aceternity/sparkles-core'
 import { BackgroundBeams } from '@/components/ui/aceternity/background-beams'
 import { ShimmerButton } from '@/components/ui/magicui/shimmer-button'
-import { NumberTicker } from '@/components/ui/magicui/number-ticker'
-import { MagicCard } from '@/components/ui/magicui/magic-card'
+
+/* ─── Rotating PMF Facts ─── */
+const PMF_FACTS = [
+  { text: 'Only 10% of startups achieve true product-market fit', source: 'CB Insights' },
+  { text: 'Companies with PMF grow 2.5x faster than those without', source: 'Andreessen Horowitz' },
+  { text: '42% of startups fail because there\'s no market need', source: 'CB Insights' },
+  { text: 'The median time to PMF is 2–3 years after founding', source: 'First Round Capital' },
+  { text: 'Startups that pivot once or twice raise 2.5x more funding', source: 'Startup Genome' },
+  { text: '74% of startup failures are due to premature scaling', source: 'Startup Genome' },
+  { text: 'The #1 reason startups fail is lack of product-market fit', source: 'Fortune' },
+  { text: '90% of new startups fail', source: 'Forbes' },
+  { text: 'The average startup takes 6 months to validate their MVP', source: 'HubSpot' },
+  { text: 'Startups that scale properly grow 20x faster than those that scale prematurely', source: 'Startup Genome' },
+  { text: 'Customer retention is the strongest signal of long-term PMF', source: 'Sequoia Capital' },
+  { text: 'Product-Market Fit is when you\'ve built something that people actually want', source: 'Sam Altman' },
+  { text: 'You can always feel when product-market fit isn\'t happening', source: 'Marc Andreessen' },
+  { text: 'PMF isn\'t a one-time event; it\'s a continuous process of refinement', source: 'Eric Ries' },
+  { text: 'Most founders focus on the product, but PMF is found in the market', source: 'Steve Blank' },
+]
+
+function RotatingFacts() {
+  const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex(prev => (prev + 1) % PMF_FACTS.length)
+    }, 6000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const fact = PMF_FACTS[index]
+
+  return (
+    <div className="h-[48px] flex items-center justify-center overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
+          className="text-center"
+        >
+          <span className="text-[13px] text-muted-foreground">{fact.text}</span>
+          {fact.source && (
+            <span className="text-[11px] text-muted-foreground/60 ml-1.5">— {fact.source}</span>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/* ─── Hero Orb Animation ─── */
+function HeroOrbs() {
+  return (
+    <div className="absolute inset-0 z-[3] pointer-events-none overflow-hidden">
+      {/* Primary floating orb */}
+      <motion.div
+        className="absolute w-[400px] h-[400px] rounded-full"
+        style={{
+          top: '10%',
+          right: '5%',
+          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%)',
+          filter: 'blur(40px)',
+        }}
+        animate={{
+          y: [0, -30, 0],
+          x: [0, 15, 0],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
+      {/* Secondary orb */}
+      <motion.div
+        className="absolute w-[350px] h-[350px] rounded-full"
+        style={{
+          bottom: '15%',
+          left: '3%',
+          background: 'radial-gradient(circle, rgba(13, 148, 136, 0.06) 0%, transparent 70%)',
+          filter: 'blur(50px)',
+        }}
+        animate={{
+          y: [0, 20, 0],
+          x: [0, -10, 0],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: 1.5,
+        }}
+      />
+      {/* Accent ring */}
+      <motion.div
+        className="absolute w-[200px] h-[200px] rounded-full"
+        style={{
+          top: '40%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          border: '1px solid rgba(16, 185, 129, 0.06)',
+        }}
+        animate={{
+          scale: [1, 1.4, 1],
+          opacity: [0.3, 0.6, 0.3],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: 0.5,
+        }}
+      />
+    </div>
+  )
+}
 
 interface HeroSectionProps {
   onStartAssessment: () => void
-  analysisCount: number
 }
 
 const ease = [0.25, 1, 0.5, 1] as const
 
-export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionProps) {
+export function HeroSection({ onStartAssessment }: HeroSectionProps) {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true })
 
   return (
     <section
       ref={ref}
-      className="relative min-h-[100vh] flex flex-col items-center justify-center px-6 pt-28 pb-20 overflow-hidden"
+      className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #f8fafc 0%, #f0fdf4 40%, #f0fdfa 70%, #f8fafc 100%)' }}
     >
-      {/* Aceternity: Background Beams */}
-      <BackgroundBeams />
+      {/* SparklesCore — subtle particle texture on light */}
+      <div className="absolute inset-0 z-0">
+        <SparklesCore
+          particleDensity={80}
+          particleColor="#10B981"
+          minSize={0.3}
+          maxSize={1}
+          speed={0.4}
+        />
+      </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto text-center">
-        {/* Overline badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
+      {/* BackgroundBeams — subtle beam layer */}
+      <BackgroundBeams className="z-[1] opacity-50" />
+
+      {/* Radial glow — top center green wash */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/4 w-[70rem] h-[28rem] z-[2] pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.1) 0%, rgba(13, 148, 136, 0.05) 40%, transparent 70%)',
+        }}
+      />
+
+      {/* Dot pattern overlay for texture */}
+      <div className="absolute inset-0 z-[2] pointer-events-none hero-dot-pattern opacity-40" />
+
+      {/* Animated floating orbs */}
+      <HeroOrbs />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-4xl mx-auto text-center px-6 py-16 md:py-20">
+
+        {/* Headline with FlipWords + Hero Highlight */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease }}
-          className="mb-7"
+          transition={{ duration: 0.7, delay: 0.15, ease }}
+          className="text-[2.5rem] sm:text-[3.25rem] md:text-[4.25rem] leading-[1.06] tracking-tight text-foreground mb-4"
+          style={{ fontFamily: 'var(--font-display)' }}
         >
-          <div
-            className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-[13px] font-medium text-muted-foreground"
-            style={{
-              background: 'rgba(241, 245, 249, 0.8)',
-              border: '1px solid rgba(226, 232, 240, 0.8)',
-              backdropFilter: 'blur(8px)',
-            }}
-          >
-            <span className="relative flex h-[6px] w-[6px]">
-              <span
-                className="absolute inset-0 rounded-full bg-emerald-500"
-                style={{ animation: 'pulse-ring 2s cubic-bezier(0,0,0.2,1) infinite' }}
-              />
-              <span className="relative rounded-full h-[6px] w-[6px] bg-emerald-500" />
-            </span>
-            <span>
-              <NumberTicker value={analysisCount} className="font-semibold text-foreground" />+ diagnostics completed
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Headline — Aceternity: TextGenerateEffect */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.3, delay: 0.15 }}
-          className="mb-5"
-        >
-          <TextGenerateEffect
-            words="Validate your path to Product-Market Fit in 3 minutes"
-            className="text-[2.75rem] sm:text-[3.5rem] md:text-[4rem] text-foreground"
-            highlightWords={['Product-Market', 'Fit']}
-            duration={0.5}
+          <Highlight>Validate</Highlight> your path to
+          <br />
+          <FlipWords
+            words={['Product-Market Fit', 'Growth Strategy', 'Revenue Model', 'Retention Metrics']}
+            duration={2500}
           />
-        </motion.div>
+        </motion.h1>
 
         {/* Sub-headline */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.7, ease }}
-          className="text-[17px] md:text-lg leading-relaxed text-muted-foreground max-w-xl mx-auto mb-10"
+          transition={{ duration: 0.7, delay: 0.3, ease }}
+          className="text-[16px] md:text-[17px] leading-relaxed text-muted-foreground max-w-lg mx-auto mb-7"
         >
-          A free, AI-driven diagnostic for post-MVP founders. Identify traction gaps, market risks, and your next move.
+          A free, AI-driven diagnostic for post-MVP founders.
+          <br className="hidden sm:block" />
+          Identify traction gaps, market risks, and your next move — in 3 minutes.
         </motion.p>
 
         {/* CTA row */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.9, ease }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14"
+          transition={{ duration: 0.7, delay: 0.45, ease }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-7"
         >
-          {/* Magic UI: ShimmerButton */}
           <ShimmerButton onClick={onStartAssessment} aria-label="Start free assessment">
             Start Free Assessment
             <svg
@@ -109,102 +232,90 @@ export function HeroSection({ onStartAssessment, analysisCount }: HeroSectionPro
           <span className="text-[13px] text-muted-foreground">No signup required &middot; 3 min</span>
         </motion.div>
 
-        {/* Social proof row */}
+        {/* Trust badges */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 1.1, ease }}
-          className="flex flex-col items-center gap-6"
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.6, ease }}
+          className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[12px] text-muted-foreground"
         >
-          {/* Testimonial cards */}
-          <div className="flex flex-wrap justify-center gap-3 max-w-2xl">
-            {[
-              {
-                name: 'Sarah K.',
-                role: 'CEO, DataStack',
-                quote: 'Identified our retention gap in 3 minutes. Changed our roadmap.',
-              },
-              {
-                name: 'Marcus L.',
-                role: 'Founder, Brevity',
-                quote: 'The PMF score convinced our investors we had the right strategy.',
-              },
-              {
-                name: 'Priya R.',
-                role: 'CTO, Flowbase',
-                quote: 'Best free diagnostic for early-stage. Actionable, not theoretical.',
-              },
-            ].map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 8 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 1.3 + i * 0.08, duration: 0.5, ease }}
-              >
-                <MagicCard
-                  className="card-elevated px-5 py-4 max-w-[240px] text-left"
-                  gradientColor="rgba(16, 185, 129, 0.08)"
-                >
-                  <p className="text-[13px] leading-snug text-muted-foreground mb-3">&ldquo;{t.quote}&rdquo;</p>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                      style={{ background: 'linear-gradient(135deg, #0F172A, #334155)' }}
-                    >
-                      {t.name[0]}
-                    </div>
-                    <div>
-                      <p className="text-[12px] font-semibold text-foreground leading-tight">{t.name}</p>
-                      <p className="text-[11px] text-muted-foreground leading-tight">{t.role}</p>
-                    </div>
-                  </div>
-                </MagicCard>
-              </motion.div>
-            ))}
+          <div className="flex items-center gap-1.5">
+            <svg
+              className="w-4 h-4 text-emerald-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Free forever</span>
           </div>
-
-          {/* Trust line */}
-          <div className="flex items-center gap-6 text-[12px] text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <svg
-                className="w-4 h-4 text-emerald-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>Free forever</span>
-            </div>
-            <div className="w-px h-3 bg-border" />
-            <div className="flex items-center gap-1.5">
-              <svg
-                className="w-4 h-4 text-emerald-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-                />
-              </svg>
-              <span>No signup wall</span>
-            </div>
-            <div className="w-px h-3 bg-border" />
-            <span>
-              Built by <span className="font-medium text-foreground">Wednesday Solutions</span>
-            </span>
+          <div className="w-px h-3 bg-border" />
+          <div className="flex items-center gap-1.5">
+            <svg
+              className="w-4 h-4 text-emerald-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+              />
+            </svg>
+            <span>No signup wall</span>
           </div>
+          <div className="w-px h-3 bg-border" />
+          <span>
+            Built by <span className="font-medium text-foreground">Wednesday Solutions</span>
+          </span>
         </motion.div>
       </div>
+
+      {/* Rotating PMF Facts — bottom-left toast */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={isInView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.6, delay: 0.8, ease }}
+        className="absolute bottom-8 left-6 z-20 max-w-sm"
+      >
+        <div
+          className="flex items-start gap-3 px-4 py-3 rounded-2xl"
+          style={{
+            background: 'rgba(255, 255, 255, 0.85)',
+            border: '1px solid rgba(16, 185, 129, 0.12)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)',
+          }}
+        >
+          <span className="relative flex h-[7px] w-[7px] shrink-0 mt-[7px]">
+            <span
+              className="absolute inset-0 rounded-full bg-emerald-500"
+              style={{ animation: 'pulse-ring 2s cubic-bezier(0,0,0.2,1) infinite' }}
+            />
+            <span
+              className="relative rounded-full h-[7px] w-[7px] bg-emerald-500"
+              style={{ boxShadow: '0 0 6px rgba(16, 185, 129, 0.5)' }}
+            />
+          </span>
+          <RotatingFacts />
+        </div>
+      </motion.div>
+
+      {/* Bottom gradient fade to next section */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-24 z-[5] pointer-events-none"
+        style={{
+          background: 'linear-gradient(to top, var(--background), transparent)',
+        }}
+      />
     </section>
   )
 }

@@ -1,74 +1,236 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 import { motion } from 'framer-motion'
 
-import { Button } from '@/components/ui/button'
-import { PREVIEW_SIGNALS } from '@/lib/constants'
+import { PREVIEW_SIGNALS, REPORT_SECTIONS } from '@/lib/constants'
 
 interface PreviewCardsProps {
-  onContinue: () => void
+  onUnlock: (email: string) => void
 }
 
-const SEVERITY_MAP = {
-  risk: { bg: '#FEF2F2', border: '#FECACA', dot: '#EF4444', label: 'bg-red-50 text-red-700' },
-  signal: { bg: '#FFFBEB', border: '#FDE68A', dot: '#F59E0B', label: 'bg-amber-50 text-amber-700' },
-  strength: { bg: '#ECFDF5', border: '#A7F3D0', dot: '#10B981', label: 'bg-emerald-50 text-emerald-700' },
+const SEVERITY_MAP: Record<string, { bg: string; border: string; icon: string; badge: string; barColor: string }> = {
+  risk: { bg: '#FEF2F2', border: '#FED7D7', icon: '🔴', badge: 'Critical Risk', barColor: '#EF4444' },
+  signal: { bg: '#FFFBEB', border: '#FDE68A', icon: '🟡', badge: 'Attention', barColor: '#F59E0B' },
+  strength: { bg: '#ECFDF5', border: '#A7F3D0', icon: '🟢', badge: 'Strength', barColor: '#10B981' },
 }
 
-export function PreviewCards({ onContinue }: PreviewCardsProps) {
+const LOCKED_SECTIONS = REPORT_SECTIONS.slice(3, 6) // 3 locked teaser items (compact)
+
+const ease = [0.25, 1, 0.5, 1] as const
+
+function AnimatedScore({ target }: { target: number }) {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    let frame: number
+    const start = Date.now()
+    const duration = 1500
+    const tick = () => {
+      const elapsed = Date.now() - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(eased * target))
+      if (progress < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [target])
+
+  return <>{count}</>
+}
+
+export function PreviewCards({ onUnlock }: PreviewCardsProps) {
+  const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
+
+  const score = 47
+  const scoreColor = score >= 70 ? '#10B981' : score >= 40 ? '#F59E0B' : '#EF4444'
+  const scoreLabel = score >= 70 ? 'Strong' : score >= 40 ? 'Emerging' : 'Pre-PMF'
+  const circumference = 2 * Math.PI * 38
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const isValidEmail = emailRegex.test(email)
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isValidEmail) {
+      setEmailError('Please enter a valid email')
+      return
+    }
+    setEmailError('')
+    onUnlock(email)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="px-5 py-2"
+      className="w-full"
     >
-      <div className="ml-[42px] max-w-lg flex flex-col gap-3">
-        {PREVIEW_SIGNALS.map((signal, i) => {
-          const s = SEVERITY_MAP[signal.type]
-          return (
-            <motion.div
-              key={signal.title}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + i * 0.12, duration: 0.4, ease: [0.33, 1, 0.68, 1] }}
-              className="rounded-2xl p-4"
-              style={{ background: s.bg, border: `1px solid ${s.border}` }}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-xl shrink-0 mt-0.5">{signal.emoji}</span>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-[6px] h-[6px] rounded-full" style={{ background: s.dot }} />
-                    <p className="text-[13px] font-semibold text-foreground">{signal.title}</p>
-                  </div>
-                  <p className="text-[12px] text-muted-foreground leading-relaxed">{signal.description}</p>
-                </div>
-              </div>
-            </motion.div>
-          )
-        })}
+      <div className="max-w-md mx-auto flex flex-col" style={{ maxHeight: 'calc(100vh - 100px)' }}>
 
+        {/* Top section: Score + label */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.5, ease }}
+          className="flex items-center gap-4 mb-4"
+        >
+          {/* Compact score ring */}
+          <div className="relative shrink-0" style={{ width: 80, height: 80 }}>
+            <svg width={80} height={80} className="-rotate-90">
+              <circle cx={40} cy={40} r={34} fill="none" stroke="#E2E8F0" strokeWidth={5} />
+              <motion.circle
+                cx={40} cy={40} r={34}
+                fill="none" stroke={scoreColor} strokeWidth={5} strokeLinecap="round"
+                strokeDasharray={circumference}
+                initial={{ strokeDashoffset: circumference }}
+                animate={{ strokeDashoffset: circumference * (1 - score / 100) }}
+                transition={{ delay: 0.3, duration: 1.5, ease }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-[20px] font-bold text-foreground tabular-nums leading-none">
+                <AnimatedScore target={score} />
+              </span>
+              <span className="text-[8px] text-muted-foreground font-medium">/100</span>
+            </div>
+          </div>
+
+          <div>
+            <span
+              className="inline-block text-[10px] font-semibold px-2.5 py-0.5 rounded-full mb-1"
+              style={{ background: `${scoreColor}15`, color: scoreColor }}
+            >
+              {scoreLabel}
+            </span>
+            <p className="text-[12px] text-muted-foreground leading-snug max-w-[220px]">
+              Early signals detected. Improvements needed in distribution &amp; positioning.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Signal cards — compact */}
+        <div className="flex flex-col gap-1.5 mb-3">
+          {PREVIEW_SIGNALS.map((signal, i) => {
+            const s = SEVERITY_MAP[signal.type]
+            return (
+              <motion.div
+                key={signal.title}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 + i * 0.08, duration: 0.35, ease }}
+                className="rounded-lg px-3 py-2.5 border"
+                style={{ background: s.bg, borderColor: s.border }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-sm shrink-0">{s.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px] font-semibold text-foreground truncate">{signal.title}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{signal.description}</p>
+                  </div>
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full shrink-0" style={{ background: `${s.barColor}12`, color: s.barColor }}>
+                    {s.badge}
+                  </span>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+
+        {/* Blurred locked sections */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.3 }}
+          className="relative mb-4"
+        >
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+            6 more sections locked
+          </p>
+          <div className="space-y-1 relative">
+            {LOCKED_SECTIONS.map((section, i) => (
+              <div
+                key={section.id}
+                className="rounded-lg px-3 py-2 border flex items-center gap-2"
+                style={{
+                  background: '#F8FAFC',
+                  borderColor: '#E2E8F0',
+                  filter: `blur(${1.5 + i * 0.8}px)`,
+                }}
+              >
+                <span className="text-sm">{section.icon}</span>
+                <span className="text-[11px] text-foreground/60">{section.title}</span>
+              </div>
+            ))}
+            <div
+              className="absolute inset-x-0 bottom-0 h-[60%] pointer-events-none rounded-lg"
+              style={{ background: 'linear-gradient(to bottom, transparent, var(--background))' }}
+            />
+          </div>
+        </motion.div>
+
+        {/* Inline email gate — right here, no separate step */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.4 }}
-          className="mt-1"
+          transition={{ delay: 0.9, duration: 0.4 }}
         >
-          <Button
-            onClick={onContinue}
-            className="rounded-xl text-[13px] font-medium cursor-pointer gap-2 text-white h-11"
-            style={{
-              background: 'linear-gradient(135deg, #0F172A, #1E293B)',
-              minHeight: '44px',
-            }}
-            aria-label="Unlock full report"
-          >
-            Unlock Full Report
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Button>
+          <form onSubmit={handleUnlock} className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type="email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); if (emailError) setEmailError('') }}
+                placeholder="founder@startup.com"
+                className="w-full h-11 px-3.5 text-[13px] rounded-xl border bg-white outline-none transition-all focus:ring-2"
+                style={{
+                  borderColor: emailError ? '#FCA5A5' : 'rgba(226, 232, 240, 0.8)',
+                  ...(email && !emailError ? { borderColor: 'rgba(16, 185, 129, 0.3)' } : {}),
+                }}
+                aria-label="Email address"
+                autoComplete="email"
+              />
+              {isValidEmail && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                >
+                  <svg className="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </motion.div>
+              )}
+            </div>
+            <motion.button
+              type="submit"
+              disabled={!isValidEmail}
+              className="shrink-0 flex items-center gap-1.5 px-5 h-11 rounded-xl text-[13px] font-semibold cursor-pointer text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              style={{
+                background: isValidEmail ? 'linear-gradient(135deg, #0F172A, #1E293B)' : '#CBD5E1',
+                boxShadow: isValidEmail ? '0 2px 10px rgba(15, 23, 42, 0.2)' : 'none',
+              }}
+              whileHover={isValidEmail ? { y: -1, boxShadow: '0 4px 14px rgba(15, 23, 42, 0.25)' } : {}}
+              whileTap={isValidEmail ? { scale: 0.97 } : {}}
+              aria-label="Unlock full report"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+              Unlock
+            </motion.button>
+          </form>
+          {emailError && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[11px] text-red-500 mt-1 ml-1">{emailError}</motion.p>
+          )}
+          <p className="text-[9px] text-muted-foreground text-center mt-2">No spam. We&apos;ll only send your report.</p>
         </motion.div>
       </div>
     </motion.div>

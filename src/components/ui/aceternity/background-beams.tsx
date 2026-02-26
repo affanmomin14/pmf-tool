@@ -34,7 +34,7 @@ export function BackgroundBeams({ className }: BackgroundBeamsProps) {
 
       {/* Grid */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.07]"
         style={{
           backgroundImage: `
             linear-gradient(rgba(15, 23, 42, 1) 1px, transparent 1px),
